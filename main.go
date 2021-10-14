@@ -64,11 +64,6 @@ func main() {
 			log.Fatalf("Failed to json.Marshal: %v\n", err)
 		}
 		fmt.Println(string(marshal))
-	} else {
-		err = json.Unmarshal([]byte(`{"access_token":"ya29.a0ARrdaM8DTbjrlZzcEdDgwAjt3KQK59T9zESszDJOFL8mDLdGYjkEfrZxrcWgbRZsKo1NKcL1dE9wNzadO7MQqGwc5_FLqRo8P8bOqDPSxB32QsnpAzpAtFecDAbxlnQkLnEHYiYsSQeb6b2fOAKKKwNj8fa7","token_type":"Bearer","refresh_token":"1//061kKHV7kdg0eCgYIARAAGAYSNwF-L9Ir6Bla-4RuuGq7BU2IyNTiYN4M3gmodPNrjPbblFBuftIJGmI7FeEVUcoYM8PGaqrTpSc","expiry":"2021-10-14T00:31:55.14596186-07:00"}`), &tok)
-		if err != nil {
-			log.Fatalf("err: %v\n", err)
-		}
 	}
 
 	client := config.Client(oauth2.NoContext, tok)
