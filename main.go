@@ -13,6 +13,20 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
+type Albums struct {
+	albums        []Album
+	nextPageToken string
+}
+
+type Album struct {
+	id                    string
+	title                 string
+	productUrl            string
+	mediaItemsCount       string
+	coverPhotoBaseUrl     string
+	coverPhotoMediaItemId string
+}
+
 func main() {
 	credentials, err := ioutil.ReadFile("client_secret_604508162253-87ajfsafq6n3b66qnj0mo24dtekicppj.apps.googleusercontent.com.json")
 	if err != nil {
@@ -93,7 +107,6 @@ func main() {
 		log.Fatalf("Failed to client.Get: %v\n", err)
 	}
 
-	fmt.Println(resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -101,5 +114,16 @@ func main() {
 	}
 
 	fmt.Println(string(body))
+
+	var albums Albums
+	err = json.Unmarshal(body, &albums)
+
+	if err != nil {
+		log.Fatalf("Failed to json.Unmarshal: %v\n", err)
+	}
+
+	fmt.Println(albums)
+	// TODO: It's broken... it returns {[] } now. Fix this.
+
 	// TODO: Get photos and upload to Google Cloud Storage
 }
