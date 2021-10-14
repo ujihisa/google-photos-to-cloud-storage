@@ -5,17 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os/exec"
+	"strings"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
-
-var config = &oauth2.Config{
-	// ClientID:     "604508162253-87ajfsafq6n3b66qnj0mo24dtekicppj.apps.googleusercontent.com",
-	// ClientSecret: "",
-	Endpoint: google.Endpoint,
-	// Scopes:   []string{urlshortener.UrlshortenerScope},
-}
 
 func main() {
 	credentials, err := ioutil.ReadFile("client_secret_604508162253-87ajfsafq6n3b66qnj0mo24dtekicppj.apps.googleusercontent.com.json")
@@ -38,7 +33,7 @@ func main() {
 
 	tokenJsonStr, err := ioutil.ReadFile("token.json")
 	if err != nil {
-		// TODO
+		// That's fine, it just misses &tok
 	} else {
 		err = json.Unmarshal(tokenJsonStr, &tok)
 		if err != nil {
@@ -50,10 +45,17 @@ func main() {
 		url := config.AuthCodeURL("state")
 		fmt.Printf("Visit the URL for the auth dialog:\n%v\n", url)
 
+		cmd := exec.Command("xdg-open", url)
+		if err := cmd.Run(); err != nil {
+			// Ignore xdg-open failures
+		}
+
 		var code string
 		if _, err := fmt.Scan(&code); err != nil {
 			log.Fatal(err)
 		}
+
+		tok, err = config.Exchange(oauth2.NoContext, code)
 
 		if err != nil {
 			log.Fatalf("Failed to config.Exchange %v\n", err)
@@ -70,6 +72,9 @@ func main() {
 
 	resp, err := client.Get("https://photoslibrary.googleapis.com/v1/albums")
 	if err != nil {
+		if strings.Contains(err.Error(), "invalid_grant") {
+			log.Fatalf("Invalid grant. Please remove your token.json and try again.")
+		}
 		log.Fatalf("Failed to client.Get: %v\n", err)
 	}
 
