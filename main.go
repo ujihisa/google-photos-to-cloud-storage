@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -65,7 +66,21 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to json.Marshal: %v\n", err)
 		}
+
 		fmt.Println(string(marshal))
+
+		f, err := os.Create("./token.json")
+
+		if err != nil {
+			log.Fatalf("Failed to os.Create: %v\n", err)
+		}
+
+		defer f.Close()
+
+		_, err = f.Write(marshal)
+		if err != nil {
+			log.Fatalf("Failed to f.Write: %v\n", err)
+		}
 	}
 
 	client := config.Client(oauth2.NoContext, tok)
