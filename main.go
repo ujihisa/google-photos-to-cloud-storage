@@ -122,7 +122,7 @@ func main() {
 		log.Fatalf("Failed to json.Unmarshal: %v\n", err)
 	}
 
-	// fmt.Printf("%#v\n", albums)
+	// fmt.Printf("%+v\n", albums)
 	pretty, _ := json.MarshalIndent(albums, "", "  ")
 	fmt.Println(string(pretty))
 
