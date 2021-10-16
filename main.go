@@ -14,17 +14,22 @@ import (
 )
 
 type Albums struct {
-	Albums        []Album `albums`
-	NextPageToken string  `nextPageToken`
+	Albums        []Album `json:"albums"`
+	NextPageToken string  `json:"nextPageToken"`
+}
+
+type SharedAlbums struct {
+	Albums        []Album `json:"sharedAlbums"`
+	NextPageToken string  `json:"nextPageToken"`
 }
 
 type Album struct {
-	Id                    string `id`
-	Title                 string `title`
-	ProductUrl            string `productUrl`
-	MediaItemsCount       string `mediaItemsCount`
-	CoverPhotoBaseUrl     string `coverPhotoBaseUrl`
-	CoverPhotoMediaItemId string `coverPhotoMediaItemId`
+	Id                    string `json:"id"`
+	Title                 string `json:"title"`
+	ProductUrl            string `json:"productUrl"`
+	MediaItemsCount       string `json:"mediaItemsCount"`
+	CoverPhotoBaseUrl     string `json:"coverPhotoBaseUrl"`
+	CoverPhotoMediaItemId string `json:"coverPhotoMediaItemId"`
 }
 
 func main() {
@@ -99,6 +104,7 @@ func main() {
 
 	client := config.Client(oauth2.NoContext, tok)
 
+	// Private albums
 	resp, err := client.Get("https://photoslibrary.googleapis.com/v1/albums")
 	if err != nil {
 		if strings.Contains(err.Error(), "invalid_grant") {
@@ -113,7 +119,7 @@ func main() {
 		log.Fatalf("Failed to io.ReadAll: %v\n", err)
 	}
 
-	fmt.Println(string(body))
+	// fmt.Println(string(body))
 
 	var albums Albums
 	err = json.Unmarshal(body, &albums)
@@ -124,6 +130,34 @@ func main() {
 
 	// fmt.Printf("%+v\n", albums)
 	pretty, _ := json.MarshalIndent(albums, "", "  ")
+	fmt.Println(string(pretty))
+
+	// Shared albums
+	resp, err = client.Get("https://photoslibrary.googleapis.com/v1/sharedAlbums")
+	if err != nil {
+		if strings.Contains(err.Error(), "invalid_grant") {
+			log.Fatalf("Invalid grant. Please remove your token.json and try again.")
+		}
+		log.Fatalf("Failed to client.Get: %v\n", err)
+	}
+
+	defer resp.Body.Close()
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("Failed to io.ReadAll: %v\n", err)
+	}
+
+	// fmt.Println(string(body))
+
+	var sharedAlbums SharedAlbums
+	err = json.Unmarshal(body, &sharedAlbums)
+
+	if err != nil {
+		log.Fatalf("Failed to json.Unmarshal: %v\n", err)
+	}
+
+	// fmt.Printf("%+v\n", albums)
+	pretty, _ = json.MarshalIndent(sharedAlbums, "", "  ")
 	fmt.Println(string(pretty))
 
 	// TODO: Get photos and upload to Google Cloud Storage
