@@ -122,9 +122,9 @@ func main() {
 		log.Fatalf("Failed to json.Unmarshal: %v\n", err)
 	}
 
-	fmt.Printf("%#v\n", albums)
-	fmt.Println(albums)
-	// TODO: It's still somewhat broken...
+	// fmt.Printf("%#v\n", albums)
+	pretty, _ := json.MarshalIndent(albums, "", "  ")
+	fmt.Println(string(pretty))
 
 	// TODO: Get photos and upload to Google Cloud Storage
 }
