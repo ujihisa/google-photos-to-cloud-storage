@@ -14,17 +14,17 @@ import (
 )
 
 type Albums struct {
-	albums        []Album
-	nextPageToken string
+	Albums        []Album `albums`
+	NextPageToken string  `nextPageToken`
 }
 
 type Album struct {
-	id                    string
-	title                 string
-	productUrl            string
-	mediaItemsCount       string
-	coverPhotoBaseUrl     string
-	coverPhotoMediaItemId string
+	Id                    string `id`
+	Title                 string `title`
+	ProductUrl            string `productUrl`
+	MediaItemsCount       string `mediaItemsCount`
+	CoverPhotoBaseUrl     string `coverPhotoBaseUrl`
+	CoverPhotoMediaItemId string `coverPhotoMediaItemId`
 }
 
 func main() {
@@ -122,8 +122,9 @@ func main() {
 		log.Fatalf("Failed to json.Unmarshal: %v\n", err)
 	}
 
+	fmt.Printf("%#v\n", albums)
 	fmt.Println(albums)
-	// TODO: It's broken... it returns {[] } now. Fix this.
+	// TODO: It's still somewhat broken...
 
 	// TODO: Get photos and upload to Google Cloud Storage
 }
